@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AES Mode Visualizer</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">🔐 CryptoViz</span>
+      <span class="tagline">AES Mode Visualizer — ECB vs CBC vs CTR</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- UPLOAD & KEY SECTION -->
+    <section class="card" id="input-section">
+      <h2>1. Upload Image & Enter Password</h2>
+      <div class="input-row">
+        <div class="upload-box" id="upload-box">
+          <input type="file" id="image-input" accept="image/png, image/jpeg" hidden />
+          <label for="image-input">
+            <span class="upload-icon">🖼️</span>
+            <span>Click to upload PNG/JPG</span>
+          </label>
+        </div>
+        <div class="key-box">
+          <label for="password-input">Password (→ SHA-256 AES Key)</label>
+          <input type="text" id="password-input" placeholder="Enter password..." />
+          <button id="generate-key-btn" class="btn btn-secondary">Generate Key</button>
+          <div id="key-display" class="key-display hidden"></div>
+        </div>
+      </div>
+      <div id="original-preview" class="preview-area hidden">
+        <p class="label">Original Image</p>
+        <canvas id="original-canvas"></canvas>
+      </div>
+    </section>
+
+    <!-- ENCRYPT SECTION -->
+    <section class="card" id="encrypt-section">
+      <h2>2. Encrypt</h2>
+      <button id="encrypt-btn" class="btn btn-primary" disabled>🔒 Encrypt with ECB, CBC & CTR</button>
+      <div id="encrypt-results" class="results-grid hidden">
+        <div class="result-col">
+          <p class="label label-bad">❌ ECB Mode</p>
+          <canvas id="ecb-canvas"></canvas>
+          <p class="mode-note">Blocks encrypted independently — patterns leak!</p>
+        </div>
+        <div class="result-col">
+          <p class="label label-good">✅ CBC Mode</p>
+          <canvas id="cbc-canvas"></canvas>
+          <p class="mode-note">IV + chaining — looks random</p>
+          <div id="cbc-iv-display" class="iv-display"></div>
+        </div>
+        <div class="result-col">
+          <p class="label label-best">⭐ CTR Mode</p>
+          <canvas id="ctr-canvas"></canvas>
+          <p class="mode-note">Counter + XOR — fastest & modern</p>
+          <div id="ctr-nonce-display" class="iv-display"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOCK HIGHLIGHTING -->
+    <section class="card" id="block-section">
+      <h2>3. Block Pattern Analysis</h2>
+      <p class="section-desc">Identical 16×16 pixel blocks are colored the same. ECB leaks structure; CBC/CTR don't.</p>
+      <div id="block-results" class="results-grid hidden">
+        <div class="result-col">
+          <p class="label label-bad">ECB Block Map</p>
+          <canvas id="ecb-block-canvas"></canvas>
+          <div id="ecb-block-stats" class="block-stats"></div>
+        </div>
+        <div class="result-col">
+          <p class="label label-good">CBC Block Map</p>
+          <canvas id="cbc-block-canvas"></canvas>
+          <div id="cbc-block-stats" class="block-stats"></div>
+        </div>
+        <div class="result-col">
+          <p class="label label-best">CTR Block Map</p>
+          <canvas id="ctr-block-canvas"></canvas>
+          <div id="ctr-block-stats" class="block-stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTOGRAM -->
+    <section class="card" id="histogram-section">
+      <h2>4. Pixel Histogram Analysis</h2>
+      <p class="section-desc">ECB shows peaks (patterns). CBC/CTR show a flat distribution (uniform randomness = good encryption).</p>
+      <div id="histogram-results" class="histogram-grid hidden">
+        <div class="chart-col">
+          <p class="label">Original</p>
+          <canvas id="hist-original"></canvas>
+        </div>
+        <div class="chart-col">
+          <p class="label label-bad">ECB</p>
+          <canvas id="hist-ecb"></canvas>
+        </div>
+        <div class="chart-col">
+          <p class="label label-good">CBC</p>
+          <canvas id="hist-cbc"></canvas>
+        </div>
+        <div class="chart-col">
+          <p class="label label-best">CTR</p>
+          <canvas id="hist-ctr"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVALANCHE EFFECT -->
+    <section class="card" id="avalanche-section">
+      <h2>5. Avalanche Effect Demo</h2>
+      <p class="section-desc">Change 1 bit in the original → re-encrypt with ECB → compare. Within each 16-byte block, AES diffuses the change across all output bytes.</p>
+      <button id="avalanche-btn" class="btn btn-secondary" disabled>⚡ Run Avalanche Demo (ECB)</button>
+      <div id="avalanche-results" class="results-grid hidden">
+        <div class="result-col">
+          <p class="label">CTR (original)</p>
+          <canvas id="av-original-canvas"></canvas>
+        </div>
+        <div class="result-col">
+          <p class="label">CTR (1 pixel changed)</p>
+          <canvas id="av-modified-canvas"></canvas>
+        </div>
+        <div class="result-col">
+          <p class="label">Difference (amplified)</p>
+          <canvas id="av-diff-canvas"></canvas>
+        </div>
+      </div>
+      <div id="avalanche-stats" class="hidden"></div>
+    </section>
+
+    <!-- DECRYPT SECTION -->
+    <section class="card" id="decrypt-section">
+      <h2>6. Decrypt & Verify</h2>
+      <p class="section-desc">Decrypt all three modes and verify they match the original.</p>
+      <button id="decrypt-btn" class="btn btn-primary" disabled>🔓 Decrypt All</button>
+      <div id="decrypt-results" class="results-grid hidden">
+        <div class="result-col">
+          <p class="label label-bad">ECB Decrypted</p>
+          <canvas id="decrypted-ecb-canvas"></canvas>
+          <div id="ecb-verify" class="verify-badge"></div>
+        </div>
+        <div class="result-col">
+          <p class="label label-good">CBC Decrypted</p>
+          <canvas id="decrypted-cbc-canvas"></canvas>
+          <div id="cbc-verify" class="verify-badge"></div>
+        </div>
+        <div class="result-col">
+          <p class="label label-best">CTR Decrypted</p>
+          <canvas id="decrypted-ctr-canvas"></canvas>
+          <div id="ctr-verify" class="verify-badge"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATIONAL PANEL -->
+    <section class="card" id="edu-section">
+      <h2>📚 Why Does This Matter?</h2>
+      <div class="edu-grid">
+        <div class="edu-card bad">
+          <h3>❌ ECB — Never Use</h3>
+          <p>Each block is encrypted independently. Identical plaintext blocks produce identical ciphertext blocks. This leaks structural information — you can literally see the image through the encryption.</p>
+        </div>
+        <div class="edu-card good">
+          <h3>✅ CBC — Better</h3>
+          <p>Each block is XOR'd with the previous ciphertext before encryption. Requires an IV. Sequential — can't parallelize. Decryption is parallelizable. Common in TLS, disk encryption.</p>
+        </div>
+        <div class="edu-card best">
+          <h3>⭐ CTR — Best for Most Cases</h3>
+          <p>Turns AES into a stream cipher using a counter. No padding needed, fully parallelizable, no error propagation. Used in TLS 1.3, disk encryption, and HTTPS everywhere.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
