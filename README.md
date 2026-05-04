@@ -97,9 +97,8 @@ No npm install needed — Chart.js is loaded via CDN.
 
 | Member | Branch | Contribution |
 |--------|--------|-------------|
-| — | `UI-Image` | UI, image handling (`image.js`), block analysis (`block.js`), app integration (`app.js`) |
-| — | — | Crypto implementation (`crypto.js`) |
-| — | — | Histogram (`histogram.js`), styling (`style.css`) |
+| Talha | `UI-Image` | UI, image handling (`image.js`), Histogram(`histogram.js`), HTML (`index.html`), CSS (`style.css`) |
+| Abrar | `Crypto` | Crypto implementation (`crypto.js`), Block Analysis(`block.js`), App Integration(`app.js`) |
 
 ---
 
