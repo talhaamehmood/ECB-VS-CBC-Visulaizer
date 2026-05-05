@@ -13,6 +13,10 @@
     <div class="header-inner">
       <span class="logo">🔐 CryptoViz</span>
       <span class="tagline">AES Mode Visualizer — ECB vs CBC vs CTR</span>
+      <button class="theme-toggle" id="theme-toggle-btn">
+        <span class="toggle-icon">🌙</span>
+        <span class="toggle-label">Dark</span>
+      </button>
     </div>
   </header>
 
@@ -182,5 +186,27 @@
   </main>
 
   <script type="module" src="js/app.js"></script>
+  <script>
+  const btn = document.getElementById('theme-toggle-btn');
+  const icon = btn.querySelector('.toggle-icon');
+  const label = btn.querySelector('.toggle-label');
+  const saved = localStorage.getItem('theme') || 'light';
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    icon.textContent = '☀️'; label.textContent = 'Light';
+  }
+  btn.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      icon.textContent = '🌙'; label.textContent = 'Dark';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      icon.textContent = '☀️'; label.textContent = 'Light';
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+</script>
 </body>
 </html>
