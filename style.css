@@ -379,5 +379,4 @@ input[type="text"]:focus {
   header { padding: 16px 20px; }
   .input-row, .results-grid, .edu-grid { grid-template-columns: 1fr; }
   .histogram-grid { grid-template-columns: repeat(2, 1fr); }
-  .tagline { display: none; }
 }
