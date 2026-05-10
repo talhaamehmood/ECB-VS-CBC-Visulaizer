@@ -140,6 +140,38 @@
       <div id="avalanche-stats" class="hidden"></div>
     </section>
 
+        <!-- AI ANALYSIS -->
+    <section class="card" id="ai-section">
+      <h2>6. AI Randomness Analyzer</h2>
+      <p class="section-desc">Three statistical tests — Shannon Entropy, Chi-Square uniformity, and Byte Correlation — feed into a weighted classifier that scores each mode's encryption quality.</p>
+      <div id="ai-results" class="ai-grid hidden">
+        <div class="ai-card" id="ai-original">
+          <div class="ai-mode-title">📷 Original</div>
+          <div class="ai-metrics"></div>
+          <div class="ai-verdict"></div>
+          <div class="ai-bars"></div>
+        </div>
+        <div class="ai-card" id="ai-ecb">
+          <div class="ai-mode-title" style="color:var(--bad)">❌ ECB</div>
+          <div class="ai-metrics"></div>
+          <div class="ai-verdict"></div>
+          <div class="ai-bars"></div>
+        </div>
+        <div class="ai-card" id="ai-cbc">
+          <div class="ai-mode-title" style="color:var(--good)">✅ CBC</div>
+          <div class="ai-metrics"></div>
+          <div class="ai-verdict"></div>
+          <div class="ai-bars"></div>
+        </div>
+        <div class="ai-card" id="ai-ctr">
+          <div class="ai-mode-title" style="color:var(--best)">⭐ CTR</div>
+          <div class="ai-metrics"></div>
+          <div class="ai-verdict"></div>
+          <div class="ai-bars"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- DECRYPT SECTION -->
     <section class="card" id="decrypt-section">
       <h2>6. Decrypt & Verify</h2>

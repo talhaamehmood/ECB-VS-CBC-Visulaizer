@@ -12,6 +12,7 @@ Upload any image, enter a password, and watch how three different AES modes encr
 - **Visualize** why ECB is broken (patterns leak through the encryption)
 - **Analyze** block patterns — identical blocks are highlighted the same color
 - **Compare** pixel histograms — good encryption produces a flat distribution
+- **Score encryption quality** with an AI Randomness Analyzer using three statistical tests
 - **Run the Avalanche Effect demo** — flip 1 bit, see how many bytes change
 - **Decrypt** all three modes and verify they match the original
 
@@ -40,6 +41,7 @@ ECB's weakness is visible to the naked eye — the structure of the original ima
 │   ├── block.js        # Block pattern analysis and color-coded canvas rendering
 │   ├── histogram.js    # Pixel frequency histogram using Chart.js
 │   └── image.js        # Image upload, canvas rendering, RGB extraction
+│   └── entropy.js      # AI randomness analyzer
 ```
 
 ---
@@ -90,15 +92,6 @@ The key never leaves your browser. IV and nonce are random per encryption run an
 | Google Fonts | — | JetBrains Mono + Syne typography |
 
 No npm install needed — Chart.js is loaded via CDN.
-
----
-
-## 👥 Team & Contributions
-
-| Member | Branch | Contribution |
-|--------|--------|-------------|
-| Talha | `UI-Image` | UI, image handling (`image.js`), Histogram(`histogram.js`), HTML (`index.html`), CSS (`style.css`) |
-| Abrar | `Crypto` | Crypto implementation (`crypto.js`), Block Analysis(`block.js`), App Integration(`app.js`) |
 
 ---
 
